@@ -7,50 +7,54 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for handling Product CRUD and search/filter operations.
+ */
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
     @PostMapping
-    public Product create(@RequestBody Product product) {
-        return service.createProduct(product);
+    public Product createProduct(@RequestBody Product product) {
+        return productService.createProduct(product);
     }
 
     @GetMapping("/{id}")
-    public Product getById(@PathVariable String id) {
-        return service.getProductById(id);
+    public Product getProductById(@PathVariable String id) {
+        return productService.getProductById(id);
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable String id, @RequestBody Product product) {
-        return service.updateProduct(id, product);
+    public Product updateProduct(@PathVariable String id, @RequestBody Product product) {
+        return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable String id) {
-        service.deleteProduct(id);
+    public void deleteProduct(@PathVariable String id) {
+        productService.deleteProduct(id);
     }
 
     @GetMapping
-    public List<Product> getAll() {
-        return service.getAllProducts();
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @GetMapping("/search")
     public List<Product> searchByName(@RequestParam String name) {
-        return service.searchByName(name);
+        return productService.searchByName(name);
     }
 
     @GetMapping("/filter/category")
     public List<Product> filterByCategory(@RequestParam String category) {
-        return service.filterByCategory(category);
+        return productService.filterByCategory(category);
     }
 
     @GetMapping("/filter/price")
-    public List<Product> filterByPrice(@RequestParam double min, @RequestParam double max) {
-        return service.filterByPriceRange(min, max);
+    public List<Product> filterByPriceRange(@RequestParam double min,
+                                            @RequestParam double max) {
+        return productService.filterByPriceRange(min, max);
     }
 }

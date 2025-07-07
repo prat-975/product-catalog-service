@@ -1,5 +1,6 @@
 package com.example.eCommerce.service;
 
+import com.example.eCommerce.exception.ProductNotFoundException;
 import com.example.eCommerce.model.Product;
 import com.example.eCommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product updateProduct(String id, Product product) {
-        Product existing = repository.findById(id).orElseThrow();
+        Product existing = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
         existing.setName(product.getName());
         existing.setDescription(product.getDescription());
         existing.setCategory(product.getCategory());
@@ -30,12 +32,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String id) {
+        if (!repository.existsById(id)) {
+            throw new ProductNotFoundException(id);
+        }
         repository.deleteById(id);
     }
 
     @Override
     public Product getProductById(String id) {
-        return repository.findById(id).orElseThrow();
+        return repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
@@ -50,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> filterByCategory(String category) {
-        return repository.findByCategory(category);
+        return repository.findByCategoryIgnoreCase(category);
     }
 
     @Override
