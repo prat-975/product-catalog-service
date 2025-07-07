@@ -4,14 +4,12 @@ import com.example.eCommerce.model.Product;
 import com.example.eCommerce.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +36,7 @@ class ProductControllerTest {
                 .name("iPhone")
                 .description("Smartphone")
                 .category("Electronics")
-                .price(new BigDecimal("999.99"))
+                .price(999.99)
                 .build();
 
         when(productService.createProduct(any())).thenReturn(product);
@@ -57,7 +55,7 @@ class ProductControllerTest {
                 .name("iPhone")
                 .description("Smartphone")
                 .category("Electronics")
-                .price(new BigDecimal("999.99"))
+                .price(999.99)
                 .build();
 
         when(productService.getProductById("1")).thenReturn(product);
@@ -75,7 +73,7 @@ class ProductControllerTest {
                         .name("iPhone")
                         .description("Smartphone")
                         .category("Electronics")
-                        .price(new BigDecimal("999.99"))
+                        .price(999.99)
                         .build()
         ));
 
@@ -92,7 +90,7 @@ class ProductControllerTest {
                         .name("iPhone")
                         .description("Smartphone")
                         .category("Electronics")
-                        .price(new BigDecimal("999.99"))
+                        .price(999.99)
                         .build()
         ));
 
@@ -109,7 +107,7 @@ class ProductControllerTest {
                         .name("iPhone")
                         .description("Smartphone")
                         .category("Electronics")
-                        .price(new BigDecimal("999.99"))
+                        .price(999.99)
                         .build()
         ));
 
@@ -120,14 +118,14 @@ class ProductControllerTest {
 
     @Test
     void test_filter_by_price_range() throws Exception {
-        when(productService.filterByPriceRange(new BigDecimal("500.00"), new BigDecimal("1000.00")))
+        when(productService.filterByPriceRange(500.00, 1000.00))
                 .thenReturn(List.of(
                         Product.builder()
                                 .id("1")
                                 .name("iPhone")
                                 .description("Smartphone")
                                 .category("Electronics")
-                                .price(new BigDecimal("999.99"))
+                                .price(999.99)
                                 .build()
                 ));
 

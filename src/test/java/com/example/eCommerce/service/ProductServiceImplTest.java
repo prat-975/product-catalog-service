@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,7 @@ class ProductServiceImplTest {
                 .name("iPhone")
                 .description("Smartphone")
                 .category("Electronics")
-                .price(new BigDecimal("799.99"))
+                .price(799.99)
                 .build();
     }
 
@@ -114,8 +113,8 @@ class ProductServiceImplTest {
 
     @Test
     void test_filter_by_price_range() {
-        BigDecimal min = new BigDecimal("500.00");
-        BigDecimal max = new BigDecimal("1000.00");
+        double min = 500.00;
+        double max = 1000.00;
         when(productRepository.findByPriceBetween(min, max)).thenReturn(Arrays.asList(product));
 
         List<Product> filtered = productService.filterByPriceRange(min, max);

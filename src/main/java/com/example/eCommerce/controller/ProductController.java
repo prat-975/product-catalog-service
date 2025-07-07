@@ -5,7 +5,6 @@ import com.example.eCommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -51,8 +50,8 @@ public class ProductController {
     }
 
     @GetMapping("/filter/price")
-    public List<Product> filterByPriceRange(@RequestParam BigDecimal min,
-                                            @RequestParam BigDecimal max) {
+    public List<Product> filterByPriceRange(@RequestParam double min,
+                                            @RequestParam double max) {
         return productService.filterByPriceRange(min, max);
     }
 }

@@ -6,7 +6,6 @@ import com.example.eCommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,27 +20,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(String id, Product updatedProduct) {
+    public Product updateProduct(String id, Product product) {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
-        existing.setName(updatedProduct.getName());
-        existing.setDescription(updatedProduct.getDescription());
-        existing.setCategory(updatedProduct.getCategory());
-        existing.setPrice(updatedProduct.getPrice());
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        existing.setName(product.getName());
+        existing.setDescription(product.getDescription());
+        existing.setCategory(product.getCategory());
+        existing.setPrice(product.getPrice());
         return productRepository.save(existing);
     }
 
     @Override
     public void deleteProduct(String id) {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
         productRepository.deleteById(id);
     }
 
     @Override
     public Product getProductById(String id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @Override
@@ -60,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> filterByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<Product> filterByPriceRange(double minPrice, double maxPrice) {
         return productRepository.findByPriceBetween(minPrice, maxPrice);
     }
 }
