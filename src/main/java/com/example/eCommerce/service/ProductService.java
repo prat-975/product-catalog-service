@@ -2,6 +2,7 @@ package com.example.eCommerce.service;
 
 import com.example.eCommerce.model.Product;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
@@ -12,5 +13,5 @@ public interface ProductService {
     List<Product> getAllProducts();
     List<Product> searchByName(String name);
     List<Product> filterByCategory(String category);
-    List<Product> filterByPriceRange(double minPrice, double maxPrice);
+    List<Product> filterByPriceRange(BigDecimal minPrice, BigDecimal maxPrice);
 }

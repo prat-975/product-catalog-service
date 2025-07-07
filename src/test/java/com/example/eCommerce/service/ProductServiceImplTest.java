@@ -1,5 +1,6 @@
 package com.example.eCommerce.service;
 
+import com.example.eCommerce.exception.ProductNotFoundException;
 import com.example.eCommerce.model.Product;
 import com.example.eCommerce.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,75 +20,105 @@ import static org.mockito.Mockito.*;
 class ProductServiceImplTest {
 
     @Mock
-    private ProductRepository repository;
+    private ProductRepository productRepository;
 
     @InjectMocks
-    private ProductServiceImpl service;
+    private ProductServiceImpl productService;
 
     private Product product;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        product = new Product("1", "iPhone", "Latest model", "Electronics", 999.99);
+        product = Product.builder()
+                .id("abc123")
+                .name("iPhone")
+                .description("Smartphone")
+                .category("Electronics")
+                .price(new BigDecimal("799.99"))
+                .build();
     }
 
     @Test
-    void testCreateProduct() {
-        when(repository.save(product)).thenReturn(product);
-        Product saved = service.createProduct(product);
+    void test_create_product() {
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+        Product saved = productService.createProduct(product);
         assertEquals("iPhone", saved.getName());
     }
 
     @Test
-    void testGetProductById() {
-        when(repository.findById("1")).thenReturn(Optional.of(product));
-        Product found = service.getProductById("1");
-        assertEquals("Electronics", found.getCategory());
+    void test_update_product_success() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+
+        Product updated = productService.updateProduct("abc123", product);
+        assertEquals("iPhone", updated.getName());
     }
 
     @Test
-    void testUpdateProduct() {
-        Product updated = new Product("1", "iPhone 15", "Updated", "Electronics", 1099.99);
-        when(repository.findById("1")).thenReturn(Optional.of(product));
-        when(repository.save(any(Product.class))).thenReturn(updated);
-
-        Product result = service.updateProduct("1", updated);
-        assertEquals("iPhone 15", result.getName());
-        assertEquals(1099.99, result.getPrice());
+    void test_update_product_not_found() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.empty());
+        assertThrows(ProductNotFoundException.class, () -> {
+            productService.updateProduct("abc123", product);
+        });
     }
 
     @Test
-    void testDeleteProduct() {
-        service.deleteProduct("1");
-        verify(repository, times(1)).deleteById("1");
+    void test_delete_product_success() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.of(product));
+        doNothing().when(productRepository).deleteById("abc123");
+
+        assertDoesNotThrow(() -> productService.deleteProduct("abc123"));
+        verify(productRepository).deleteById("abc123");
     }
 
     @Test
-    void testGetAllProducts() {
-        when(repository.findAll()).thenReturn(List.of(product));
-        List<Product> result = service.getAllProducts();
-        assertEquals(1, result.size());
+    void test_delete_product_not_found() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.empty());
+        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct("abc123"));
     }
 
     @Test
-    void testSearchByName() {
-        when(repository.findByNameContainingIgnoreCase("phone")).thenReturn(List.of(product));
-        List<Product> result = service.searchByName("phone");
-        assertFalse(result.isEmpty());
+    void test_get_product_by_id_success() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.of(product));
+        Product found = productService.getProductById("abc123");
+        assertEquals("iPhone", found.getName());
     }
 
     @Test
-    void testFilterByCategory() {
-        when(repository.findByCategoryIgnoreCase("Electronics")).thenReturn(List.of(product));
-        List<Product> result = service.filterByCategory("Electronics");
-        assertEquals(1, result.size());
+    void test_get_product_by_id_not_found() {
+        when(productRepository.findById("abc123")).thenReturn(Optional.empty());
+        assertThrows(ProductNotFoundException.class, () -> productService.getProductById("abc123"));
     }
 
     @Test
-    void testFilterByPriceRange() {
-        when(repository.findByPriceBetween(900.0, 1000.0)).thenReturn(List.of(product));
-        List<Product> result = service.filterByPriceRange(900.0, 1000.0);
-        assertEquals(1, result.size());
+    void test_get_all_products() {
+        when(productRepository.findAll()).thenReturn(List.of(product));
+        List<Product> all = productService.getAllProducts();
+        assertEquals(1, all.size());
+    }
+
+    @Test
+    void test_search_by_name() {
+        when(productRepository.findByNameContainingIgnoreCase("iphone")).thenReturn(List.of(product));
+        List<Product> results = productService.searchByName("iphone");
+        assertEquals(1, results.size());
+    }
+
+    @Test
+    void test_filter_by_category() {
+        when(productRepository.findByCategoryIgnoreCase("Electronics")).thenReturn(List.of(product));
+        List<Product> results = productService.filterByCategory("Electronics");
+        assertEquals(1, results.size());
+    }
+
+    @Test
+    void test_filter_by_price_range() {
+        BigDecimal min = new BigDecimal("500.00");
+        BigDecimal max = new BigDecimal("1000.00");
+        when(productRepository.findByPriceBetween(min, max)).thenReturn(Arrays.asList(product));
+
+        List<Product> filtered = productService.filterByPriceRange(min, max);
+        assertEquals(1, filtered.size());
     }
 }

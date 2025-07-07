@@ -6,61 +6,61 @@ import com.example.eCommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
 
     @Override
     public Product createProduct(Product product) {
-        return repository.save(product);
+        return productRepository.save(product);
     }
 
     @Override
-    public Product updateProduct(String id, Product product) {
-        Product existing = repository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-        existing.setName(product.getName());
-        existing.setDescription(product.getDescription());
-        existing.setCategory(product.getCategory());
-        existing.setPrice(product.getPrice());
-        return repository.save(existing);
+    public Product updateProduct(String id, Product updatedProduct) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+        existing.setName(updatedProduct.getName());
+        existing.setDescription(updatedProduct.getDescription());
+        existing.setCategory(updatedProduct.getCategory());
+        existing.setPrice(updatedProduct.getPrice());
+        return productRepository.save(existing);
     }
 
     @Override
     public void deleteProduct(String id) {
-        if (!repository.existsById(id)) {
-            throw new ProductNotFoundException(id);
-        }
-        repository.deleteById(id);
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+        productRepository.deleteById(id);
     }
 
     @Override
     public Product getProductById(String id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return repository.findAll();
+        return productRepository.findAll();
     }
 
     @Override
     public List<Product> searchByName(String name) {
-        return repository.findByNameContainingIgnoreCase(name);
+        return productRepository.findByNameContainingIgnoreCase(name);
     }
 
     @Override
     public List<Product> filterByCategory(String category) {
-        return repository.findByCategoryIgnoreCase(category);
+        return productRepository.findByCategoryIgnoreCase(category);
     }
 
     @Override
-    public List<Product> filterByPriceRange(double min, double max) {
-        return repository.findByPriceBetween(min, max);
+    public List<Product> filterByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
     }
 }

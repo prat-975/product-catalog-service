@@ -5,11 +5,9 @@ import com.example.eCommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Controller for handling Product CRUD and search/filter operations.
- */
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -22,11 +20,6 @@ public class ProductController {
         return productService.createProduct(product);
     }
 
-    @GetMapping("/{id}")
-    public Product getProductById(@PathVariable String id) {
-        return productService.getProductById(id);
-    }
-
     @PutMapping("/{id}")
     public Product updateProduct(@PathVariable String id, @RequestBody Product product) {
         return productService.updateProduct(id, product);
@@ -35,6 +28,11 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
+    }
+
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable String id) {
+        return productService.getProductById(id);
     }
 
     @GetMapping
@@ -53,8 +51,8 @@ public class ProductController {
     }
 
     @GetMapping("/filter/price")
-    public List<Product> filterByPriceRange(@RequestParam double min,
-                                            @RequestParam double max) {
+    public List<Product> filterByPriceRange(@RequestParam BigDecimal min,
+                                            @RequestParam BigDecimal max) {
         return productService.filterByPriceRange(min, max);
     }
 }

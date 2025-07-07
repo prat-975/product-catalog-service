@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,8 +32,15 @@ class ProductControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void testCreateProduct() throws Exception {
-        Product product = new Product("1", "iPhone", "Smartphone", "Electronics", 999.99);
+    void test_create_product() throws Exception {
+        Product product = Product.builder()
+                .id("1")
+                .name("iPhone")
+                .description("Smartphone")
+                .category("Electronics")
+                .price(new BigDecimal("999.99"))
+                .build();
+
         when(productService.createProduct(any())).thenReturn(product);
 
         mockMvc.perform(post("/api/products")
@@ -43,8 +51,15 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetById() throws Exception {
-        Product product = new Product("1", "iPhone", "Smartphone", "Electronics", 999.99);
+    void test_get_product_by_id() throws Exception {
+        Product product = Product.builder()
+                .id("1")
+                .name("iPhone")
+                .description("Smartphone")
+                .category("Electronics")
+                .price(new BigDecimal("999.99"))
+                .build();
+
         when(productService.getProductById("1")).thenReturn(product);
 
         mockMvc.perform(get("/api/products/1"))
@@ -53,9 +68,15 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetAll() throws Exception {
+    void test_get_all_products() throws Exception {
         when(productService.getAllProducts()).thenReturn(List.of(
-                new Product("1", "iPhone", "Smartphone", "Electronics", 999.99)
+                Product.builder()
+                        .id("1")
+                        .name("iPhone")
+                        .description("Smartphone")
+                        .category("Electronics")
+                        .price(new BigDecimal("999.99"))
+                        .build()
         ));
 
         mockMvc.perform(get("/api/products"))
@@ -64,9 +85,15 @@ class ProductControllerTest {
     }
 
     @Test
-    void testSearchByName() throws Exception {
+    void test_search_by_name() throws Exception {
         when(productService.searchByName("iphone")).thenReturn(List.of(
-                new Product("1", "iPhone", "Smartphone", "Electronics", 999.99)
+                Product.builder()
+                        .id("1")
+                        .name("iPhone")
+                        .description("Smartphone")
+                        .category("Electronics")
+                        .price(new BigDecimal("999.99"))
+                        .build()
         ));
 
         mockMvc.perform(get("/api/products/search?name=iphone"))
@@ -75,9 +102,15 @@ class ProductControllerTest {
     }
 
     @Test
-    void testFilterByCategory() throws Exception {
+    void test_filter_by_category() throws Exception {
         when(productService.filterByCategory("Electronics")).thenReturn(List.of(
-                new Product("1", "iPhone", "Smartphone", "Electronics", 999.99)
+                Product.builder()
+                        .id("1")
+                        .name("iPhone")
+                        .description("Smartphone")
+                        .category("Electronics")
+                        .price(new BigDecimal("999.99"))
+                        .build()
         ));
 
         mockMvc.perform(get("/api/products/filter/category?category=Electronics"))
@@ -86,12 +119,19 @@ class ProductControllerTest {
     }
 
     @Test
-    void testFilterByPriceRange() throws Exception {
-        when(productService.filterByPriceRange(500.0, 1000.0)).thenReturn(List.of(
-                new Product("1", "iPhone", "Smartphone", "Electronics", 999.99)
-        ));
+    void test_filter_by_price_range() throws Exception {
+        when(productService.filterByPriceRange(new BigDecimal("500.00"), new BigDecimal("1000.00")))
+                .thenReturn(List.of(
+                        Product.builder()
+                                .id("1")
+                                .name("iPhone")
+                                .description("Smartphone")
+                                .category("Electronics")
+                                .price(new BigDecimal("999.99"))
+                                .build()
+                ));
 
-        mockMvc.perform(get("/api/products/filter/price?min=500&max=1000"))
+        mockMvc.perform(get("/api/products/filter/price?min=500.00&max=1000.00"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].price").value(999.99));
     }

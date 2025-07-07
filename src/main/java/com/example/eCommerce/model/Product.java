@@ -1,8 +1,10 @@
 package com.example.eCommerce.model;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import lombok.*;
+
+import java.math.BigDecimal;
 
 @Document(collection = "products")
 @Data
@@ -10,11 +12,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Product {
+
     @Id
     private String id;
 
     private String name;
     private String description;
     private String category;
-    private double price;
+    private BigDecimal price;
 }
